@@ -43,6 +43,7 @@ void split_space(struct block* current, int size) {
 
     struct block* split_tail = PTR_OFFSET(current, min_space);
     split_tail->size = available_space - min_space;
+    split_tail->next = current->next;
     current->size = padded_requested_space;
     current->next = split_tail;
 }
