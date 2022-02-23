@@ -30,7 +30,7 @@ void print_data() {
 }
 
 void myfree(void* p) {
-    struct block* node = p - sizeof(struct block);
+    struct block* node = PTR_OFFSET(p, -PADDED_SIZE(sizeof(struct block)));
     node->in_use = 0;
 }
 
@@ -75,7 +75,6 @@ int main() {
 
     p = myalloc(512);
     print_data();
-
 
     myfree(p);
     print_data();
