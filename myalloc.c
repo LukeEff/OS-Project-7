@@ -29,9 +29,23 @@ void print_data() {
     printf("\n");
 }
 
+void coalesc() {
+    struct block* current = head;
+    while (current != NULL && current->next != NULL) {
+        struct block* next = current->next;
+        if (current->in_use == 0 && next->in_use == 0) {
+            int padded_block_size = PADDED_SIZE(sizeof(struct block));
+            current->size += next->size + padded_block_size;
+            current->next = next->next;
+        } else
+            current = next;
+    }
+}
+
 void myfree(void* p) {
     struct block* node = PTR_OFFSET(p, -PADDED_SIZE(sizeof(struct block)));
     node->in_use = 0;
+    coalesc();
 }
 
 void split_space(struct block* current, int size) {
@@ -72,12 +86,25 @@ void* myalloc(int amount) {
 }
 
 int main() {
-    void* p;
+    void *p, *q, *r, *s;
 
-    p = myalloc(512);
+    p = myalloc(10);
+    print_data();
+    q = myalloc(20);
+    print_data();
+    r = myalloc(30);
+    print_data();
+    s = myalloc(40);
     print_data();
 
+    myfree(q);
+    print_data();
     myfree(p);
     print_data();
+    myfree(s);
+    print_data();
+    myfree(r);
+    print_data();
+
     return 0;
 }
